@@ -1,0 +1,18 @@
+<launch>
+	<param name="/use_sim_time" value="true"/>
+	<arg name="map_file" default="$(find turtlebot_gazebo)/maps/playground.yaml"/>
+	
+	<!-- Load the map  -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
+	
+	<!-- Launch turtle bot world   -->
+	<include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/>
+	
+	<!-- Publish a static transformation between /odom and /map -->
+    	<node name="tf" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 /map /odom 100" />
+
+	<!-- Launch navigation_planner node   -->
+	<node name="navigation_task" pkg="navigation_task" type="navigation_task.py" output="screen" cwd="node">
+		<param name="robot_size" value="0.75"/>
+	</node>
+</launch>
